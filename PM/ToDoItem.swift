@@ -26,4 +26,11 @@ extension ToDoItem {
         
         return request
     }
+    
+    func date2String(time: Date?) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY-MM-dd HH:MM:SS"
+
+        return dateFormatter.string(from: time!)
+    }
 }

@@ -12,20 +12,39 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
     @FetchRequest(fetchRequest: ToDoItem.getAllToDoItems()) var toDoItems: FetchedResults<ToDoItem>
     
-    @State private var newTodoItem = ""
+    @State private var newToDoItem = ""
     @State private var pickerSelectedItem = 0
     var steprrer = 0
     
+    
+    @State private var showModal = false
+    /*
+     Section(header: Text("Chapter".uppercased())) {
+     ForEach(dataSource.loadDataSource(relatedTo: book)) { chapter in
+     
+     if self.editMode == .active {
+     ChapterListCell(chapter: chapter)
+     } else {
+     NavigationLink(destination: ChapterView(chapter: chapter)) {
+     // NavigationLink(destination: ChapterView(chapter: chapter)) {
+     ChapterListCell(chapter: chapter)
+     }
+     }
+     }
+     .onMove(perform: self.dataSource.move)
+     .onDelete(perform: self.dataSource.delete)
+     }
+     */
     var body: some View {
         NavigationView {
             VStack {
                 Picker(selection: $pickerSelectedItem, label: Text("")) {
                     HStack {
                         Image(systemName: "list.bullet")
-                        
+                            
                             .font(.headline)
                     }.padding(5)
-                    .tag(0)
+                        .tag(0)
                     
                     HStack {
                         Image(systemName: "calendar")
@@ -47,8 +66,37 @@ struct ContentView: View {
                 
                 List {
                     Section(header: Text("To Do's")) {
-                        ForEach(self.toDoItems) { todoItem in
-                            ToDoItemView(title: todoItem.title!, createAt: todoItem.createdAt!, isFinished: todoItem.isFinished)
+                        ForEach(self.toDoItems) { toDoItem in
+                            Button(action: {
+                                print("hello button!!")
+                                self.showModal = true
+                            }){
+                                ListTodoItemViews(toDoItem: toDoItem)
+                            }
+                            .sheet(isPresented: self.$showModal) {
+                                EditTodoItem(toDoItem: toDoItem)
+                            }
+                            
+                            
+                            /*
+                            VStack{
+                                Text("Hello, World!")
+                                Button(action: {
+                                    print("hello button!!")
+                                    self.showModal = true
+                                }){
+                                    Text("Button")
+                                }
+                                .sheet(isPresented: self.$showModal) {
+                                    ModalView()
+                                }
+                            }
+                            */
+                            
+                            // NavigationLink(destination: EditTodoItem(toDoItem: toDoItem)) {
+                            // ListTodoItemViews(title: todoItem.title!, isFinished: todoItem.isFinished)
+                            // ListTodoItemViews(toDoItem: toDoItem)
+                            // }
                         }
                         .onDelete { indexSet in
                             let deleteItem = self.toDoItems[indexSet.first!]
@@ -62,21 +110,18 @@ struct ContentView: View {
                         }
                     }
                 }
-                .navigationBarTitle(Text("My List"))
-                .navigationBarItems(trailing: userEnvironment)
-                
                 
                 Spacer()
                 
                 HStack {
-                    TextField("New ITem", text: self.$newTodoItem)
+                    TextField("New ITem", text: self.$newToDoItem)
                     Button(action: {
-                        if self.newTodoItem.isEmpty == true {
+                        if self.newToDoItem.isEmpty == true {
                             return
                         }
                         
                         let toDoItem = ToDoItem(context: self.managedObjectContext)
-                        toDoItem.title = self.newTodoItem
+                        toDoItem.title = self.newToDoItem
                         toDoItem.createdAt = Date()
                         
                         do {
@@ -85,17 +130,19 @@ struct ContentView: View {
                             print(error)
                         }
                         
-                        self.newTodoItem = ""
+                        self.newToDoItem = ""
                     }) {
                         Image(systemName: "plus.circle.fill")
                             .foregroundColor(.green)
                             .imageScale(.large)
                     }
-                .padding()
+                    .padding()
                 }
                 .padding()
-                
             }
+            .navigationBarTitle(Text("My List"))
+            .navigationBarItems(trailing: userEnvironment)
+            
         }
     }
     
@@ -114,3 +161,20 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 #endif
+
+
+struct ModalView: View {
+    
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    
+    var body: some View {
+        Group {
+            Text("Modal view")
+            Button(action: {
+                self.presentationMode.wrappedValue.dismiss()
+            }) {
+                Text("Dismiss")
+            }
+        }
+    }
+}
