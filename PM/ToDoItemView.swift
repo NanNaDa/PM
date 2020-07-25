@@ -42,6 +42,29 @@ struct ToDoItemView: View {
                     .font(.caption)
                     .strikethrough(isFinished ? true : false)
             }
+            
+            Spacer()
+            
+            HStack{
+                HStack {
+                    Image(systemName: "increase.indent")
+                        .imageScale(.large)
+                        .frame(minWidth: 40)
+                }
+                .padding([.leading, .trailing], 3)
+                
+                HStack {
+                    EmptyView()
+                }
+                .padding([.leading, .trailing], 3)
+                
+                HStack {
+                    Image(systemName: "decrease.indent")
+                        .imageScale(.large)
+                        .frame(minWidth: 20)
+                }
+                .padding([.leading], 3)
+            }.padding()
         }
     }
 }
@@ -49,7 +72,7 @@ struct ToDoItemView: View {
 #if DEBUG
 struct ToDoItemView_Previews: PreviewProvider {
     static var previews: some View {
-        ToDoItemView(title: "My great todo", createAt: Date(), isFinished: true)
+        ToDoItemView(title: "New Item", createAt: Date(), isFinished: false)
     }
 }
 #endif

@@ -91,6 +91,7 @@ struct ContentView: View {
                             .foregroundColor(.green)
                             .imageScale(.large)
                     }
+                .padding()
                 }
                 .padding()
                 
