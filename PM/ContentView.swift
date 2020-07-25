@@ -17,35 +17,38 @@ struct ContentView: View {
     var steprrer = 0
     
     var body: some View {
-        VStack {
-            Picker(selection: $pickerSelectedItem, label: Text("")) {
-                HStack {
-                    Image(systemName: "plus")
-                        .font(.headline)
-                }
-                .tag(0)
-                
-                Text("menu 0")
-                    .tag(1)
-                
-                Text("menu 1")
-                    .tag(2)
-                
-                Text("menu 2")
-                    .tag(3)
-                
-                Text("menu 3")
-                    .tag(4)
-            }
-            .pickerStyle(SegmentedPickerStyle())
-            .padding(.horizontal, 10)
-            
-            NavigationView {
-                List {
+        NavigationView {
+            VStack {
+                Picker(selection: $pickerSelectedItem, label: Text("")) {
+                    HStack {
+                        Image(systemName: "list.bullet")
+                        
+                            .font(.headline)
+                    }.padding(5)
+                    .tag(0)
                     
+                    HStack {
+                        Image(systemName: "calendar")
+                            .font(.headline)
+                    }
+                    .padding(5)
+                    .tag(1)
+                    
+                    HStack {
+                        Image(systemName: "list.bullet.indent")
+                            .font(.headline)
+                    }
+                    .padding(5)
+                    .tag(2)
+                    
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .padding(.horizontal, 5)
+                
+                List {
                     Section(header: Text("To Do's")) {
                         ForEach(self.toDoItems) { todoItem in
-                            ToDoItemView(title: todoItem.title!, createAt: "\(todoItem.createdAt!)", isFinished: todoItem.isFinished)
+                            ToDoItemView(title: todoItem.title!, createAt: todoItem.createdAt!, isFinished: todoItem.isFinished)
                         }
                         .onDelete { indexSet in
                             let deleteItem = self.toDoItems[indexSet.first!]
@@ -60,38 +63,46 @@ struct ContentView: View {
                     }
                 }
                 .navigationBarTitle(Text("My List"))
-                .navigationBarItems(trailing: EditButton())
-            }
-            
-            Spacer()
-            
-            HStack {
-                TextField("New Item", text: self.$newTodoItem)
-                Button(action: {
-                    if self.newTodoItem.isEmpty == true {
-                        return
+                .navigationBarItems(trailing: userEnvironment)
+                
+                
+                Spacer()
+                
+                HStack {
+                    TextField("New ITem", text: self.$newTodoItem)
+                    Button(action: {
+                        if self.newTodoItem.isEmpty == true {
+                            return
+                        }
+                        
+                        let toDoItem = ToDoItem(context: self.managedObjectContext)
+                        toDoItem.title = self.newTodoItem
+                        toDoItem.createdAt = Date()
+                        
+                        do {
+                            try self.managedObjectContext.save()
+                        } catch {
+                            print(error)
+                        }
+                        
+                        self.newTodoItem = ""
+                    }) {
+                        Image(systemName: "plus.circle.fill")
+                            .foregroundColor(.green)
+                            .imageScale(.large)
                     }
-                    
-                    let toDoItem = ToDoItem(context: self.managedObjectContext)
-                    toDoItem.title = self.newTodoItem
-                    toDoItem.createdAt = Date()
-                    
-                    do {
-                        try self.managedObjectContext.save()
-                    } catch {
-                        print(error)
-                    }
-                    
-                    self.newTodoItem = ""
-                }) {
-                    Image(systemName: "plus.circle.fill")
-                        .foregroundColor(.green)
-                        .imageScale(.large)
                 }
+                .padding()
+                
             }
-            .padding()
-            
         }
+    }
+    
+    private var userEnvironment: some View {
+        return AnyView(Button(action: {}) {
+            Image(systemName: "person.circle.fill")
+                .font(.largeTitle)
+        })
     }
 }
 

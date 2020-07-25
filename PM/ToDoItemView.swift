@@ -6,12 +6,21 @@
 //  Copyright © 2020 jkdo. All rights reserved.
 //
 
+import Foundation
 import SwiftUI
 
 struct ToDoItemView: View {
     var title: String = ""
-    var createAt: String = ""
+    var createAt: Date?
     @State var isFinished: Bool
+    
+    
+    private func date2String(time: Date?) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY-MM-dd HH:MM:SS"
+
+        return dateFormatter.string(from: time!)
+    }
     
     var body: some View {
         HStack {
@@ -29,7 +38,7 @@ struct ToDoItemView: View {
                     .font(.headline)
                     .strikethrough(isFinished ? true : false)
             
-                Text(createAt)
+                Text(date2String(time: createAt))
                     .font(.caption)
                     .strikethrough(isFinished ? true : false)
             }
@@ -40,7 +49,7 @@ struct ToDoItemView: View {
 #if DEBUG
 struct ToDoItemView_Previews: PreviewProvider {
     static var previews: some View {
-        ToDoItemView(title: "My great todo", createAt: "Today", isFinished: true)
+        ToDoItemView(title: "My great todo", createAt: Date(), isFinished: true)
     }
 }
 #endif
