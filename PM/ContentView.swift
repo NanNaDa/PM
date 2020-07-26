@@ -17,7 +17,6 @@ struct ContentView: View {
     var steprrer = 0
     
     
-    @State private var showModal = false
     /*
      Section(header: Text("Chapter".uppercased())) {
      ForEach(dataSource.loadDataSource(relatedTo: book)) { chapter in
@@ -64,52 +63,7 @@ struct ContentView: View {
                 .pickerStyle(SegmentedPickerStyle())
                 .padding(.horizontal, 5)
                 
-                List {
-                    Section(header: Text("To Do's")) {
-                        ForEach(self.toDoItems) { toDoItem in
-                            Button(action: {
-                                print("hello button!!")
-                                self.showModal = true
-                            }){
-                                ListTodoItemViews(toDoItem: toDoItem)
-                            }
-                            .sheet(isPresented: self.$showModal) {
-                                EditTodoItem(toDoItem: toDoItem)
-                            }
-                            
-                            
-                            /*
-                            VStack{
-                                Text("Hello, World!")
-                                Button(action: {
-                                    print("hello button!!")
-                                    self.showModal = true
-                                }){
-                                    Text("Button")
-                                }
-                                .sheet(isPresented: self.$showModal) {
-                                    ModalView()
-                                }
-                            }
-                            */
-                            
-                            // NavigationLink(destination: EditTodoItem(toDoItem: toDoItem)) {
-                            // ListTodoItemViews(title: todoItem.title!, isFinished: todoItem.isFinished)
-                            // ListTodoItemViews(toDoItem: toDoItem)
-                            // }
-                        }
-                        .onDelete { indexSet in
-                            let deleteItem = self.toDoItems[indexSet.first!]
-                            self.managedObjectContext.delete(deleteItem)
-                            
-                            do {
-                                try self.managedObjectContext.save()
-                            } catch {
-                                print(error)
-                            }
-                        }
-                    }
-                }
+                ToDoListViews(toDoItems: toDoItems)
                 
                 Spacer()
                 

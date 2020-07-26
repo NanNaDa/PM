@@ -10,7 +10,10 @@ import SwiftUI
 
 struct EditTodoItem: View {
     var toDoItem: ToDoItem
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
+    @Environment(\.managedObjectContext) var managedObjectContext
+
     var body: some View {
         NavigationView {
             HStack {
@@ -29,75 +32,33 @@ struct EditTodoItem: View {
     
     
     private var cancel: some View {
-        return AnyView(Button(action: {}) {
-            Text("Cancel")
-                .font(.largeTitle)
-        })
+        Group {
+            Button(action: {
+                self.presentationMode.wrappedValue.dismiss()
+            }) {
+                Text("Cancel")
+            }
+        }
     }
     
     private var save: some View {
-        return AnyView(Button(action: {}) {
-            Text("Save")
-                .font(.largeTitle)
-        })
-    }
-}
-/*
-import SwiftUI
-
-struct ContentView: View {
-    @State private var showModal = false
-    
-    var body: some View {
-        VStack{
-        Text("Hello, World!")
+        Group {
             Button(action: {
-             print("hello button!!")
-            self.showModal = true
-            }){
-                Text("Button")
-            }
-            .sheet(isPresented: self.$showModal) {
-                ModalView()
+                do {
+                    try self.managedObjectContext.save()
+                } catch {
+                    print(error)
+                }
+            }) {
+                Text("Save")
             }
         }
     }
 }
 
-struct ModalView: View {
-
-  @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-
-  var body: some View {
-    Group {
-      Text("Modal view")
-      Button(action: {
-         self.presentationMode.wrappedValue.dismiss()
-      }) {
-        Text("Dismiss")
-      }
-    }
-  }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
- */
-
-
-
-
 
 /*
-#if DEBUG
-struct EditTodoItem_Previews: PreviewProvider {
-    static var previews: some View {
-        EditTodoItem()
-    }
-}
-#endif
-*/
-
+ 🔳 reference (model example)
+   - https://ericasadun.com/2019/06/16/swiftui-modal-presentation/
+ 
+ */
